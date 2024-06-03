@@ -1,4 +1,4 @@
-CREATE TABLE public.users (
+CREATE TABLE registerUsers (
 	id serial,
 	firstname varchar(32) NULL,
 	lastname varchar(32) NULL,
@@ -17,7 +17,7 @@ CREATE TABLE public.users (
 
 
 
-INSERT INTO users (username, email, password, role) VALUES
+INSERT INTO registerUsers (username, email, password, role) VALUES
 	('alice', 'alice@example.com', '123456', 'admin'),
 	('bob', 'bob@example.com','123456', 'user'),
 	('colin', 'colin@example.com','123456', 'user'),
