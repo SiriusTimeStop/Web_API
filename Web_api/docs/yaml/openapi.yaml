@@ -15,7 +15,7 @@ servers:
 tags:
   - name: Users
     description: API endpoints for user management.
-  - name: Articles
+  - name: Dogs
     description: Access and perform CRUD operations on blog entries.
   - name: Login
     description: login user account
@@ -176,60 +176,112 @@ paths:
         '404':
           description: User was not found in the DB.
         
-  /articles/{id}:
+  /dogs/{id}:
     parameters:
       - in: path
         name: id
         schema:
           type: integer
         required: true
-        description: Numeric id of the article
+        description: Numeric id of the dog
     get:
       tags:
-        - Articles
+        - Dogs
       description:
-        Get article by id.
+        Get dog by id.
       responses:
         '200':
-          description: View of an article record.
+          description: dog record.
+          content:
+            application/json:
+              schema:
+               type: object
+               properties:              
+               $ref: ./dog.json#/definitions/dog
         '404':
-          description: Article was not found in the DB.
+          description: Dog was not found in the DB.
     put:
       tags:
-        - Articles
+        - Dogs
       description:
-        Update article by ID.
+        Update dog by ID.
       requestBody:
-        description: A new article data
+        description: A new dog data
         required: true
         content:
           application/json:
             schema:
-              $ref: ./article.json#/definitions/article     
+              $ref: ./dog.json#/definitions/dog     
       responses:
         '200':
-          description: View of an article record.
+          description: View of an dog record.
         '404':
-          description: Article was not found in the DB.
+          description: Dog was not found in the DB.
     delete:
       tags:
-        - Articles
+        - Dogs
       description:
-        Delete article by ID.
+        Delete dog by ID.
       responses:
         '200':
-          description: View of an article record.
+          description: View of an dog record.
         '404':
-          description: Article was not found in the DB.
+          description: Dog was not found in the DB.
 
-  /articles/: 
+  /dogs/search:
+    parameters:
+    - in: query
+      name: limit
+      schema:
+        type: integer
+      description: no. of records to display with 10 records/page
+    - in: query
+      name: page
+      schema:
+        type: integer
+      description: starting page no.to display
+    - in: query
+      name: fields
+      schema:
+        type: string
+      description: fields to display
+    - in: query
+      name: q
+      schema:
+        type: string
+      description: Search dog depend on the dogname or breed
     get:
       tags:
-      - Articles
-      description: Get all articles
+      - Dogs
+      description: Search dogs function
       responses:
         '200':
-          description: articles record.
+          description: dogs record.
+          content:
+            application/json:
+             schema:
+               type: object 
+               properties:   
+                 dogname:
+                   type: string
+                   description: The name of dog.
+                 maintext:
+                   type: string
+                   description: The basic information of dog.
+                 summary:
+                   type: string
+                   description: summary of dog
+        '404':
+          description: Not Found  
+
+  /dogs/: 
+    get:
+      tags:
+      - Dogs
+      description: Get all dogs
+      responses:
+        '200':
+          description: dogs record.
           content:
             application/json:
              schema:
@@ -237,37 +289,46 @@ paths:
                properties:   
                  id:
                    type: integer
-                   description: The id of article. 
-                 title:
+                   description: The id of dog. 
+                 dogname:
                    type: string
-                   description: The title of article.
-                 imageurl:
+                   description: The name of dog.
+                 maintext:
                    type: string
-                   description: The link to image of article.
+                   description: The basic information of dog.
                  summary:
                    type: string
-                   description: summary of articles
-                 authorid:
+                   description: summary of dog
+                 imageurl:
+                   type: string
+                   description: The link to image of dog.
+                 published:
+                   type: boolean 
+                   description: The dog blog whether published.  
+                 locationid:
                    type: integer 
-                   description: The id of author.  
+                   description: The location of the dog stay.
+                 staffid:
+                   type: integer 
+                   description: The staff id.  
                  links:
                    type: uri array object
-                   description: include four links to likes,fav,msg and self with articleid respectively eg.articleid=1 [{"likes":"https://xxx:3000/api/v1/articles/1/likes"},{"fav":"https://xxx:3000/api/v1/articles/1/fav"},{"msg":"https://xxx:3000/api/v1/articles/1/msg"},{"self":"https:xxx:3000/api/v1/articles/1"}]
-          '404':
-            description: Not Found  
+                   description: include four links to likes,fav,msg and self with dogid respectively eg.articleid=1 [{"likes":"https://xxx:3000/api/v1/dogs/1/likes"},{"fav":"https://xxx:3000/api/v1/dogs/1/fav"},{"msg":"https://xxx:3000/api/v1/dogs/1/msg"},{"self":"https:xxx:3000/api/v1/dogs/1"}]
+        '404':
+          description: Not Found  
     post:
       tags:
-       - Articles
-      description: Create a new article
+       - Dogs
+      description: Create a new dog
       requestBody:
-        description: A new article data
+        description: A new dog data
         required: true
         content:
           application/json:
             schema:
-              $ref: ./article.json#/definitions/article
+              $ref: ./dog.json#/definitions/dog
       responses:
         '201':
-          description: Articles created
+          description: Dogs created
         '400':
           description: Bad request

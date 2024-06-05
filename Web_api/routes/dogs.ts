@@ -7,16 +7,6 @@ import * as msgs from "../models/msgs";
 import { validateDog } from "../controllers/validation";
 import { basicAuth } from "../controllers/auth";
 
-/*
-const dogs = [
-  {title: 'Hello article', fullText: 'some text to fill the body'},
-  {title: 'another article', fullText: 'again here is some text here to fill'},
-  {title: 'coventry university', fullText: 'some news about coventry university'},
-  {title: 'smart campus', fullText: 'smart campus is coming to IVE'}
-];
-
- */
-
 interface Post {
   id: number,
   dogname: string,
@@ -58,14 +48,60 @@ const {limit=100, page=1,  order="dateCreated", direction='ASC'} = ctx.request.q
       
    }
 }
+
+const doSearchDog = async(ctx: any, next: any) =>{
+  
+  let { limit = 100, page = 1, fields = "", q = "" , order="datecreated", direction='ASC'} = ctx.request.query;
+  // ensure params are integers
+  limit = parseInt(limit);
+  page = parseInt(page);
+  // validate values to ensure they are sensible
+  limit = limit > 200 ? 200 : limit;
+  limit = limit < 1 ? 10 : limit;
+  page = page < 1 ? 1 : page;
+  let result:any;
+  // search by single field and field contents
+  // need to validate q input
+  try{
+      if (q !== "") 
+        result = await model.getSearch(fields, q);     
+      else
+      {console.log('get all')
+        result = await model.getAll(limit, page,order, direction);
+       console.log(result)
+      }
+        
+      if (result.length) {
+        if (fields !== "") {
+          // first ensure the fields are contained in an array
+          // need this since a single field in the query is passed as a string
+          console.log('fields'+fields)
+          if (!Array.isArray(fields)) {
+            fields = [fields];
+          }
+          // then filter each row in the array of results
+          // by only including the specified fields
+          result = result.map((record: any) => {
+            let partial: any = {};
+            for (let field of fields) {
+              partial[field] = record[field];
+            }
+            return partial;
+          });
+        }
+        console.log(result)
+        ctx.body = result;
+      }
+    }
+      catch(error) {
+        return error
+      }
+     await next();
+    }
+
+
 const createDog = async (ctx: RouterContext, next: any) => {
-  /*let c: any = ctx.request.body;
-  let title = c.title;
-  let fullText = c.fullText;
-  let newDog = {title: title, fullText: fullText};
-  dogs.push(newDog);
-  ctx.status = 201;
-  ctx.body = newDog;*/
+
   const body = ctx.request.body;
   let result = await model.add(body);
   if(result.status==201) {
@@ -80,11 +116,7 @@ const createDog = async (ctx: RouterContext, next: any) => {
 
 const getById = async (ctx: RouterContext, next: any) => {
   let id = +ctx.params.id;
-  /*if((id < dogs.length +1) && (id>0)){
-    ctx.body = dogs[id-1];
-  } else {
-    ctx.status = 404;
-  }*/
+ 
   let dog = await model.getById(id);
   if(dog.length) {
     ctx.body = dog[0];
@@ -97,20 +129,9 @@ const getById = async (ctx: RouterContext, next: any) => {
 
 const updateDog = async (ctx: RouterContext, next: any) => {
   let id = +ctx.params.id;
-  //let {title, fullText} = ctx.request.body;
+
   let c: any = ctx.request.body;
-  /*
-  let title = c.title;
-  let fullText = c.fullText;
-  if ((id < dogs.length+1) && (id > 0)) {
-    dogs[id-1].title = title;
-    dogs[id-1].fullText = fullText;
-    ctx.status = 200;    
-    ctx.body = dogs;
-  } else {
-    ctx.status = 404;
-  }
-  */
+
   let result = await model.update(c,id)
   if (result) {
     ctx.status = 201
@@ -121,15 +142,7 @@ const updateDog = async (ctx: RouterContext, next: any) => {
 
 const deleteDog = async (ctx: RouterContext, next: any) => {
   let id = +ctx.params.id;
- /*
-  if((id < dogs.length+1) && (id > 0)) {
-    dogs.splice(id-1, 1);
-    ctx.status = 200;
-    ctx.body = dogs;
-  } else {
-    ctx.status = 404;
-  }
-  */
+
 let dog:any = await model.deleteById(id)
   ctx.status=201
   ctx.body = dog.affectedRows ? {message: "removed"} : {message: "error"};
@@ -229,6 +242,7 @@ async function rmMsg(ctx: RouterContext, next: any){
 }
 
 router.get('/', getAll);
+router.get('/search', doSearchDog);
 router.post('/', basicAuth, bodyParser(), validateDog, createDog);
 router.get('/:id([0-9]{1,})', getById);
 router.put('/:id([0-9]{1,})', basicAuth, bodyParser(),validateDog, updateDog);

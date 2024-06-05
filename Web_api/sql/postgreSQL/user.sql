@@ -54,6 +54,26 @@ INSERT INTO locations (locationsdistrict) VALUES
 	CONSTRAINT dogsstaff_fkey FOREIGN KEY (staffid) REFERENCES registerUsers (id)
 );
 
+
+CREATE TABLE public.dogs (
+	id serial,
+	dogname varchar(32) NOT NULL,
+	maintext text NOT NULL,
+	summary text NULL,
+	datecreated timestamp NOT NULL DEFAULT now(),
+	datemodified timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	imageurl varchar(2048) NULL,
+	published bool NULL,
+	locationid int4 NOT NULL,
+	staffid int4 NULL,
+	description text NULL,
+	CONSTRAINT dogs_pkey PRIMARY KEY (id),
+	CONSTRAINT fk_dogsLT FOREIGN KEY (locationid) REFERENCES locations (id),
+  CONSTRAINT fk_dogs FOREIGN KEY (staffid) REFERENCES users (id)
+  );
+
+INSERT INTO dogs (dogname,maintext,locationid,,description) VALUES
+('Lucky','Labrador Retriever', 1,"https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Labrador_on_Quantock_%282175262184%29.jpg/1200px-Labrador_on_Quantock_%282175262184%29.jpg")
 INSERT INTO dogDatabase (dogname,age,breeds,locationsid,staffid,imageurl) VALUES
 	('Lucky', 1, 'Labrador Retriever', 1, 1,"https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Labrador_on_Quantock_%282175262184%29.jpg/1200px-Labrador_on_Quantock_%282175262184%29.jpg"),
 	('Betty', 1, 'Bulldog', 2, 1,"https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2016/07/29/20160729-050737_U720_M180408_180f.jpg?itok=tuFnZzxk"),

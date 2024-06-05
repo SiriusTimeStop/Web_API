@@ -15,6 +15,15 @@ export const getAll = async  (limit=10, page=1, order:any, direction:any) =>{
   return data;
 }
 
+export const getSearch = async  (sfield:any,q:any) =>{
+  const query = `SELECT ${sfield} FROM dogs WHERE ${sfield} LIKE '%${q}%' `;
+  try{ const data = await db.run_query(query,null);
+   return data;}
+   catch(error) {
+     return error
+ }
+}
+
 export const add = async(dog: any) => {
   let keys = Object.keys(dog);
   let values = Object.values(dog);
