@@ -1,16 +1,16 @@
 
 
-CREATE TABLE public.articleslikes(
-articleid int4,
+CREATE TABLE public.doglikes(
+dogid int4,
 userid int4,
-CONSTRAINT NoDuplicateLike UNIQUE (articleid, userid)
+CONSTRAINT NoDuplicateLike UNIQUE (dogid, userid)
 );
 
 
 CREATE TABLE public.favs(
-articleid int4,
+dogid int4,
 userid int4,
-CONSTRAINT NoDuplicateFav UNIQUE (articleid, userid)
+CONSTRAINT NoDuplicateFav UNIQUE (dogid, userid)
 );
 
 CREATE TABLE public.msgs(
