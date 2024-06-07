@@ -2,7 +2,7 @@ import * as db from '../helpers/database';
 
 //get all Msgs of articled
 export const getMsg= async  (id:any)=> {
-  let query = "SELECT * FROM msgs WHERE articleid=?;";
+  let query = "SELECT * FROM msgs WHERE dogid=?;";
   const result = await db.run_query(query, [id]);
   return result;
 }
@@ -12,7 +12,7 @@ export const add_Msg = async (id:any, uid:any,uname:any,msg:any) =>{
  console.log('body query ', msg)
   let msgtxt=msg.messagetxt;
   console.log ("msgtxt from query ",msgtxt)
-    let query = `INSERT INTO msgs (articleid,userid,username,messagetxt) VALUES (${id},${uid},'${uname}','${msgtxt}') `  
+    let query = `INSERT INTO msgs (dogid,userid,username,messagetxt) VALUES (${id},${uid},'${uname}','${msgtxt}') `  
   try{
     await db.run_query(query, [id, uid,uname,msgtxt]);  
        return {"status": 201, "affectedRows":1 }

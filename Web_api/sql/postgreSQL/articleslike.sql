@@ -14,7 +14,7 @@ CONSTRAINT NoDuplicateFav UNIQUE (dogid, userid)
 );
 
 CREATE TABLE public.msgs(
-articleid int4,
+dogid int4,
 userid int4,
 username varchar(16) NOT NULL, 
 messagetxt text NULL,
