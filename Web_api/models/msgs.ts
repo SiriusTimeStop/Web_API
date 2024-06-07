@@ -1,6 +1,6 @@
 import * as db from '../helpers/database';
 
-//get all Msgs of articled
+//get all Msgs of dog
 export const getMsg= async  (id:any)=> {
   let query = "SELECT * FROM msgs WHERE dogid=?;";
   const result = await db.run_query(query, [id]);
@@ -36,14 +36,13 @@ export const removeMsg = async  (id:any, msg:any)=> {
   
   let msgtxt:any=msgObj.messagetxt
   console.log('in query ', msgtxt)
-let query = "DELETE FROM msgs WHERE articleid=? AND messagetxt=?; ";
+let query = "DELETE FROM msgs WHERE dogid=? AND messagetxt=?; ";
    try{
     await db.run_query(query, [id, msgtxt]);  
     return { "affectedRows":1 }
   } catch(error) {
     return error
   }
-
 }
 
 
