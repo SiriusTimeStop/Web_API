@@ -18,7 +18,13 @@ export const getAll = async  (limit=10, page=1, order:any, direction:any) =>{
 export const getSearch = async  (sfield:any,q:any) =>{
   const query = `SELECT ${sfield} FROM dogs WHERE ${sfield} LIKE '%${q}%' `;
   try{ const data = await db.run_query(query,null);
-   return data;}
+  //   const data = await db.run_query(query,null);
+    const columnTitle = Object.keys(data[0])[0];
+
+    const query1 = `SELECT * FROM dogs WHERE ${columnTitle} LIKE '%${q}%' `;
+    const data1 = await db.run_query(query1,null);
+  //  return data;}
+   return data1;}
    catch(error) {
      return error
  }

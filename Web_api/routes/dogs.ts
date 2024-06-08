@@ -6,6 +6,8 @@ import * as favs from "../models/favs";
 import * as msgs from "../models/msgs";
 import { validateDog } from "../controllers/validation";
 import { basicAuth } from "../controllers/auth";
+import Twitter from 'twitter';
+import axios from 'axios';
 
 interface Post {
   id: number,
@@ -24,6 +26,15 @@ interface Post {
   }
 }
 const router:Router = new Router({prefix: '/api/v1/dogs'});
+
+const endpointURL = `https://api.twitter.com/2/tweets`;
+
+const twitterClient = new Twitter({
+  consumer_key: "jlbcWROxCtcIgFvhLkwj7rQ1M",
+  consumer_secret: "bWByJQcrwWljHyl1qzZm7NUnHAQz340tGLQgLUMBz1boa1dA7J",
+  access_token_key: "1798970769118257152-rgRNkyQM7I9KcODhEzlTbPlNVeFlRN",
+  access_token_secret: "S7r4oAXDucb6iBtm3z8dN5vkLl6spivisVzxyTn1seTOs"
+});
 
 const getAll = async (ctx: RouterContext, next: any) => {
   //ctx.body = dogs;
@@ -81,13 +92,13 @@ const doSearchDog = async(ctx: any, next: any) =>{
           }
           // then filter each row in the array of results
           // by only including the specified fields
-          result = result.map((record: any) => {
-            let partial: any = {};
-            for (let field of fields) {
-              partial[field] = record[field];
-            }
-            return partial;
-          });
+          // result = result.map((record: any) => {
+          //   let partial: any = {};
+          //   for (let field of fields) {
+          //     partial[field] = record[field];
+          //   }
+          //   return partial;
+          // });
         }
         console.log(result)
         ctx.body = result;
@@ -100,16 +111,33 @@ const doSearchDog = async(ctx: any, next: any) =>{
     }
 
 
+
 const createDog = async (ctx: RouterContext, next: any) => {
 
-  const body = ctx.request.body;
+  const body = ctx.request.body as { dogname: string, description: string };
   let result = await model.add(body);
-  if(result.status==201) {
+  if (result.status == 201) {
+    const tweet = `New dog post: ${body.dogname} - ${body.description}`;
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // Set the Content-Type header to application/json
+      },
+      body: JSON.stringify({ status: tweet }), // Convert the tweet to a JSON string
+    };
+    twitterClient.post(endpointURL, requestOptions, (error, tweetData, response) => {
+      if (error) {
+        console.error("Error uploading tweet:", error);
+      } else {
+        console.log("Tweet uploaded successfully!");
+      }
+    });
+
     ctx.status = 201;
     ctx.body = body;
   } else {
     ctx.status = 500;
-    ctx.body = {err: "insert data failed"};
+    ctx.body = { err: "insert data failed" };
   }
   await next();
 }
