@@ -36,6 +36,7 @@
     "sequelize": "^6.37.3",
     "tsx": "^4.7.1",
     "twitter": "^1.7.1",
+    "twitter-api-v2": "^1.17.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

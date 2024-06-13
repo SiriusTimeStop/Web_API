@@ -7,7 +7,8 @@ import * as msgs from "../models/msgs";
 import { validateDog } from "../controllers/validation";
 import { basicAuth } from "../controllers/auth";
 import Twitter from 'twitter';
-import axios from 'axios';
+
+
 
 interface Post {
   id: number,
@@ -27,13 +28,34 @@ interface Post {
 }
 const router:Router = new Router({prefix: '/api/v1/dogs'});
 
-const endpointURL = `https://api.twitter.com/2/tweets`;
+// const endpointURL = `https://api.twitter.com/2/tweets`;
 
-const twitterClient = new Twitter({
-  consumer_key: "jlbcWROxCtcIgFvhLkwj7rQ1M",
-  consumer_secret: "bWByJQcrwWljHyl1qzZm7NUnHAQz340tGLQgLUMBz1boa1dA7J",
-  access_token_key: "1798970769118257152-rgRNkyQM7I9KcODhEzlTbPlNVeFlRN",
-  access_token_secret: "S7r4oAXDucb6iBtm3z8dN5vkLl6spivisVzxyTn1seTOs"
+// const twitterClient = new Twitter({
+//   consumer_key: "jlbcWROxCtcIgFvhLkwj7rQ1M",
+//   consumer_secret: "bWByJQcrwWljHyl1qzZm7NUnHAQz340tGLQgLUMBz1boa1dA7J",
+//   access_token_key: "1798970769118257152-rgRNkyQM7I9KcODhEzlTbPlNVeFlRN",
+//   access_token_secret: "S7r4oAXDucb6iBtm3z8dN5vkLl6spivisVzxyTn1seTOs"
+// });
+
+// const {TwitterApi} = require('twitter-api-v2');
+
+// const client = new TwitterApi({
+//   appKey: 'FC6Pbhjo6lVI1b9jZ8QNUsnqm',
+//   appSecret: '8DkNgxDIvKqWlhgIHHgR1TbDaVWKKaFOpQ25w3pMzqOE0xMvaA',
+//   accessToken: '1798970769118257152-rgRNkyQM7I9KcODhEzlTbPlNVeFlRN',
+//   accessSecret: 'S7r4oAXDucb6iBtm3z8dN5vkLl6spivisVzxyTn1seTOs',
+//   bearerToken:'AAAAAAAAAAAAAAAAAAAAAOO3uAEAAAAA0CP4LyHMutqiu%2F4%2FSMoxdhjpeK0%3DNan2BZ5ezmARRw04FqfEwgSlTGMEryW8DsOSdsKyVVe9dkr0Fz',
+// });
+
+// const rwClient = client.readWrite;
+
+const { TwitterApi } = require('twitter-api-v2');
+
+const client = new TwitterApi({
+  appKey: 'fbTO93bii57Br32t62Ivps1Hx',
+  appSecret: '1tJ0UysvzktWPPvcVfTRmux81zh0nhgk0jDdcerb39qEL5Vl2c',
+  accessToken: '1798970769118257152-Ut8yP5L96yjpqxIXCw5pghhfuPgjdG',
+  accessSecret: 'vAId7O6ixqVJfO398m6G8aJUHKe47PhenBORqLKUQPKI0',
 });
 
 const getAll = async (ctx: RouterContext, next: any) => {
@@ -51,7 +73,7 @@ const {limit=100, page=1,  order="dateCreated", direction='ASC'} = ctx.request.q
          msg: `http://${ctx.host}/api/v1/dogs/${post.id}/msg`,
          self: `http://${ctx.host}/api/v1/dogs/${post.id}`
        };
-       return { id, dogname,   maintext,summary, imageurl,locationid, staffid, description, links }; // Utilizing the destructured elements
+       return { id, dogname,  maintext,summary, imageurl,locationid, staffid, description, links }; // Utilizing the destructured elements
      });
   ctx.body = body;
   
@@ -111,28 +133,22 @@ const doSearchDog = async(ctx: any, next: any) =>{
     }
 
 
-
 const createDog = async (ctx: RouterContext, next: any) => {
 
-  const body = ctx.request.body as { dogname: string, description: string };
+  const body = ctx.request.body as { dogname: string, maintext: string };
   let result = await model.add(body);
-  if (result.status == 201) {
-    const tweet = `New dog post: ${body.dogname} - ${body.description}`;
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', // Set the Content-Type header to application/json
-      },
-      body: JSON.stringify({ status: tweet }), // Convert the tweet to a JSON string
-    };
-    twitterClient.post(endpointURL, requestOptions, (error, tweetData, response) => {
-      if (error) {
-        console.error("Error uploading tweet:", error);
-      } else {
-        console.log("Tweet uploaded successfully!");
+  if (result.status === 201) {
+    const tweet = `New dog post, Name: ${body.dogname}, description: ${body.maintext}`;
+    
+    async function postTweet(tweetText) {
+      try {
+        const tweet = await client.v2.tweet(tweetText);
+        console.log(`Tweet posted with ID ${tweet.data.id}`);
+      } catch (error) {
+        console.error(`Failed to post tweet: ${error}`);
       }
-    });
-
+    }
+    postTweet(tweet);
     ctx.status = 201;
     ctx.body = body;
   } else {
