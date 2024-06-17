@@ -135,10 +135,10 @@ const doSearchDog = async(ctx: any, next: any) =>{
 
 const createDog = async (ctx: RouterContext, next: any) => {
 
-  const body = ctx.request.body as { dogname: string, maintext: string };
+  const body = ctx.request.body as { dogname: string, maintext: string ,imageurl:String};
   let result = await model.add(body);
   if (result.status === 201) {
-    const tweet = `New dog post, Name: ${body.dogname}, description: ${body.maintext}`;
+    const tweet = `New dog post \n Name: ${body.dogname} \n description: ${body.maintext}\n Image: ${body.imageurl}`;
     
     async function postTweet(tweetText) {
       try {

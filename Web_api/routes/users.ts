@@ -89,7 +89,7 @@ const doSearch = async(ctx: any, next: any) =>{
     let email:any = body.email;
     let role:string = 'user';
     let secretkey:string = body.actiCode;
-    let secretList:string[]= ["mongkok_123456789", "mongkok_987654321","shatin_123456789","shatin_987654321","chaiwan_123456789","chaiwan_987654321" ]
+    let secretList:string[]= ["mongkok_123456789","mongkok_987654321","kowloonbay_123456789","kowloonbay_987654321","sheungwan_123456789","sheungwan_987654321","tinhau_123456789","tinhau_987654321"]
      if(secretkey)
      {for(let i=0;i<secretList.length;i++)
        if(secretkey==secretList[i])
@@ -144,7 +144,7 @@ const deleteUser = async(ctx: any, next: any) =>{
     await next();
 }
 
-
+router.get('/', getAll);
 router.get('/', basicAuth, doSearch);
 //router.get('/search', basicAuth, doSearch);
 router.post('/', bodyParser(), validateUser, createUser);
