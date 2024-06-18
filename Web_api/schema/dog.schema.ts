@@ -32,7 +32,7 @@ export const dog = {
     "staffid": {
       "description": "Staff ID of the published",
       "type": "integer",
-      "minimum": 0
+      "minimum": 1
     },
     "description": {
       "description": "description of dog in more details",

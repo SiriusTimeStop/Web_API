@@ -6,7 +6,6 @@ import * as favs from "../models/favs";
 import * as msgs from "../models/msgs";
 import { validateDog } from "../controllers/validation";
 import { basicAuth } from "../controllers/auth";
-import Twitter from 'twitter';
 
 
 
